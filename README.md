@@ -1,1 +1,2 @@
 # GymBuddyApp
+inicijalno
