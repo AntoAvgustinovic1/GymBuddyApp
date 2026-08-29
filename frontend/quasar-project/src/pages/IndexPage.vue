@@ -20,7 +20,7 @@
         <q-select v-model="NumberOfWeeks" label="Number of weeks:" :options="WeekOptions"></q-select>
       </q-card-section>
       <q-card-actions>
-        <q-btn label="save" @click="placeholder"></q-btn>
+        <q-btn label="create" @click="placeholder"></q-btn>
         <q-btn label="close" v-close-popup></q-btn>
       </q-card-actions>
     </q-card>
