@@ -1,3 +1,4 @@
+
 <template>
   <q-page class="flex flex-center">
     <div>
@@ -30,7 +31,10 @@
 
 <script setup>
 import {ref} from 'vue'
+//import {axios} from 'axios'
+import { test } from '../../../../backend/index.js';
 
 const AddWorkoutList = ref(false);
 const WeekOptions=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+console.log(test());
 </script>
