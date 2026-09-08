@@ -7,8 +7,14 @@
         @click="AddWorkoutList=true"/>
     </div>
     <div>
-      <q-card>
-        placeholder
+      <q-card
+      v-for= "workout in workoutList"
+      :key="workout.id"
+      >
+      <q-card-section>
+        <div>{{ workout.WorkoutName}}</div>
+      </q-card-section>
+        
       </q-card>
     </div>
   </q-page>
@@ -30,11 +36,20 @@
 </template>
 
 <script setup>
-import {ref} from 'vue'
+import {onMounted, ref} from 'vue'
 //import {axios} from 'axios'
-import { test } from '../../../../backend/index.js';
+import { test, getLists } from '../../../../backend/index.js';
+
+onMounted(async()=>{
+workoutList.value= await getLists()
+
+}
+)
 
 const AddWorkoutList = ref(false);
 const WeekOptions=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+
+const workoutList = ref([]);
+
 console.log(test());
 </script>

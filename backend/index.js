@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs  } from "firebase/firestore";
+import { getFirestore, collection, getDocs, getDoc  } from "firebase/firestore";
 
 const firebaseConfig = {
 
@@ -28,4 +28,13 @@ export async function test(){
   querySnapshot.forEach((doc) => {
     console.log(`${doc.id} => ${doc.data()}`);
 });
+}
+
+export async function getLists(){
+  const dohvat = await getDocs(collection(db,"WorkoutList"))
+
+  return dohvat.docs.map(doc=>({
+    id: doc.id, // identifikator je"metadata" koji se inace nebi dohvatio preko doc.data() ispod
+    ...doc.data() //nije "metadata" vec sva preostala polja
+  }))
 }
