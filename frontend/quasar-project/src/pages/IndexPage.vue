@@ -4,7 +4,7 @@
     <div>
       <q-btn
         label="+"
-        @click="AddWorkoutList=true"/>
+        @click="addWorkoutListDialog=true"/>
     </div>
     <div>
       <q-card
@@ -12,14 +12,18 @@
       :key="workout.id"
       >
       <q-card-section>
-        <div>{{ workout.WorkoutName}}</div>
+       <q-btn
+       flat
+       @click="$router.push('/plan')"
+       >
+       <div>{{ workout.WorkoutName}}</div></q-btn> 
       </q-card-section>
         
       </q-card>
     </div>
   </q-page>
   <div>
-  <q-dialog v-model="AddWorkoutList">
+  <q-dialog v-model="addWorkoutListDialog">
     <q-card>
       <q-card-section>
         <q-input v-model="WorkoutListName" label="Name of workouts:"></q-input>
@@ -27,7 +31,7 @@
         <q-select v-model="NumberOfWeeks" label="Number of weeks:" :options="WeekOptions"></q-select>
       </q-card-section>
       <q-card-actions>
-        <q-btn label="create" @click="placeholder"></q-btn>
+        <q-btn label="create" @click="addWorkout1"></q-btn>
         <q-btn label="close" v-close-popup></q-btn>
       </q-card-actions>
     </q-card>
@@ -38,7 +42,7 @@
 <script setup>
 import {onMounted, ref} from 'vue'
 //import {axios} from 'axios'
-import { test, getLists } from '../../../../backend/index.js';
+import { test, getLists, addWorkout } from '../../../../backend/index.js';
 
 onMounted(async()=>{
 workoutList.value= await getLists()
@@ -46,10 +50,20 @@ workoutList.value= await getLists()
 }
 )
 
-const AddWorkoutList = ref(false);
+const addWorkoutListDialog = ref(false);
+const NumberOfWeeks= ref(1)
 const WeekOptions=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
 
-const workoutList = ref([]);
+const WorkoutListName = ref([])
+const WorkoutDescription=ref([])
+const workoutList = ref([])
+
+
+async function addWorkout1(){
+  await addWorkout(WorkoutListName.value, WorkoutDescription.value, NumberOfWeeks.value)
+  addWorkoutListDialog.value=false;
+  workoutList.value=await getLists();
+}
 
 console.log(test());
 </script>

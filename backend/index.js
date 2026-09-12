@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs, getDoc  } from "firebase/firestore";
+import { getFirestore, collection, getDocs, getDoc, addDoc  } from "firebase/firestore";
 
 const firebaseConfig = {
 
@@ -37,4 +37,12 @@ export async function getLists(){
     id: doc.id, // identifikator je"metadata" koji se inace nebi dohvatio preko doc.data() ispod
     ...doc.data() //nije "metadata" vec sva preostala polja
   }))
+}
+
+export async function addWorkout(ime, opis, broj) {
+  const querySnapshot=await addDoc(collection(db, "WorkoutList"), {
+    WorkoutName:ime,
+    WorkoutDescription:opis,
+    NumberWeeks:broj
+  })  
 }
