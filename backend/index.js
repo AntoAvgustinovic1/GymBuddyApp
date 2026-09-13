@@ -30,6 +30,7 @@ export async function test(){
 });
 }
 
+//funkcija za dohvat svih lista u kolekciji WorkoutList
 export async function getLists(){
   const dohvat = await getDocs(collection(db,"WorkoutList"))
 
@@ -39,10 +40,31 @@ export async function getLists(){
   }))
 }
 
+//funkcija koja prima podatke iz frontenda i stvara novu workout listu s njima
 export async function addWorkout(ime, opis, broj) {
-  const querySnapshot=await addDoc(collection(db, "WorkoutList"), {
+  const querySnapshot= await addDoc(collection(db, "WorkoutList"), {
     WorkoutName:ime,
     WorkoutDescription:opis,
     NumberWeeks:broj
-  })  
+  })
+  return querySnapshot.id; //vraca id novo stvorenog dokumenta natrag na frontend
+}
+
+//prima id dokumenta u koji zeli uci i stvoriti novu kolekciju "templates"
+export async function AddDay(id, counter){
+  const querySnapshot= await addDoc(collection(db, `WorkoutList/${id}/templates`),
+  {
+    Day:"Day "+ counter,
+    Name:"Anto"
+  })
+}
+
+//dohvat svih dana u nekom template
+export async function GetTemplates(id){
+  const querySnapshot= await getDocs(collection(db, `WorkoutList/${id}/templates`))
+  return querySnapshot.docs.map(doc=>({
+    id: doc.id,
+    ...doc.data()
+  }))
+  
 }
