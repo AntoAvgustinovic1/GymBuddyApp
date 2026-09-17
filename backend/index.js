@@ -55,7 +55,6 @@ export async function AddDay(id, counter){
   const querySnapshot= await addDoc(collection(db, `WorkoutList/${id}/templates`),
   {
     Day:"Day "+ counter,
-    Name:"Anto"
   })
 }
 

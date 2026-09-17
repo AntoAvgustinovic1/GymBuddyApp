@@ -51,7 +51,7 @@
         <q-card
         v-for="days in daysList"
         :key="days.id">
-        <q-btn><div>{{ days.Day }}</div></q-btn>
+        <q-btn @click="dayDialog=true"><div>{{ days.Day }}</div></q-btn>
         </q-card>  
 
         <q-card-section>
@@ -62,6 +62,22 @@
         </q-card-section>
 
       </q-card>
+      </q-dialog>
+    </div>
+
+    <!--Dijalog za dodavanje vjezbe u dan-->
+    <div>
+      <q-dialog
+      v-model="dayDialog">
+      <q-card style="width: 500px; height: 400px;">
+        <q-card-section>
+          <q-select v-model="selectedExcersise" label="Excersises" :options="ExcersiseOptions"></q-select>
+          <q-input v-model="selectedReps" label="reps"></q-input>
+          <q-btn style="margin-top: 10px; background-color: orange;" @click="SaveExcercise">+</q-btn>
+          <div>{{ AllExercisesInDay }}</div>
+        </q-card-section>
+      </q-card>
+
       </q-dialog>
     </div>
 
@@ -80,13 +96,20 @@ workoutList.value= await getLists()
 
 const addWorkoutListDialog = ref(false);
 const templatedialog = ref(false);
+const dayDialog = ref(false);
 const NumberOfWeeks= ref(1)
 const WeekOptions=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+const ExcersiseOptions=["Bench Press", "Squat", "Deadlift"]
 
 const WorkoutListName = ref([])
 const WorkoutDescription=ref([])
 const workoutList = ref([])
 const currentPlanId = ref([])
+
+const selectedExcersise=ref("")
+const selectedReps=ref([])
+const AllExercisesInDay=ref("")
+const SaveExcerciseVar=ref([])
 
 const counter= ref(1)
 const daysList = ref([])
@@ -104,6 +127,19 @@ async function addWorkout1(){
   addWorkoutListDialog.value=false;
   templatedialog.value=true;
   //workoutList.value=await getLists();
+}
+
+async function SaveExcercise(){
+  const temp ={
+    exercise: selectedExcersise.value,
+    reps: selectedReps.value
+  }
+  SaveExcerciseVar.value.push(temp)
+  AllExercisesInDay.value+=selectedExcersise.value + selectedReps.value + "\n"
+
+  selectedExcersise.value=""
+  selectedReps.value= null
+  console.log("aaaa: ", AllExercisesInDay.value)
 }
 
 </script>
