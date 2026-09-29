@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs, getDoc, addDoc  } from "firebase/firestore";
+import { getFirestore, collection, getDocs, getDoc, addDoc} from "firebase/firestore";
 
 const firebaseConfig = {
 
@@ -56,6 +56,7 @@ export async function AddDay(id, counter){
   {
     Day:"Day "+ counter,
   })
+  return querySnapshot.id;
 }
 
 //dohvat svih dana u nekom template
@@ -66,4 +67,12 @@ export async function GetTemplates(id){
     ...doc.data()
   }))
   
+}
+
+//pohrana plana jednog "dana" u template
+export async function SaveDay(id, dayId){
+  const querySnapshot= await addDoc(collection(db, `WorkoutList/${id}/templates/${dayId}/exercises`),
+{
+  Test:"test"
+})
 }
