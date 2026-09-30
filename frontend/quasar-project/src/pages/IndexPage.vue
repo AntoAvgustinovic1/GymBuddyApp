@@ -20,7 +20,8 @@
        flat
        @click="$router.push('/plan')"
        >
-       <div>{{ workout.WorkoutName}}</div></q-btn> 
+       <div>{{ workout.WorkoutName}}</div></q-btn>
+       <q-btn @click="EditWorkoutFunction(workout)">p</q-btn>
       </q-card-section>
       </q-card>
     </div>
@@ -35,7 +36,7 @@
           <q-select v-model="NumberOfWeeks" label="Number of weeks:" :options="WeekOptions"></q-select>
         </q-card-section>
         <q-card-actions>
-          <q-btn label="create" @click="addWorkout1"></q-btn>
+          <q-btn label="create" @click="addWorkoutFunction"></q-btn>
           <q-btn label="close" v-close-popup></q-btn>
         </q-card-actions>
       </q-card>
@@ -51,7 +52,7 @@
         <q-card
         v-for="days in daysList"
         :key="days.id">
-        <q-btn @click="dayDialog=true"><div>{{ days.Day }}</div></q-btn>
+        <q-btn @click="OpenDayDialogFunction(days)"><div>{{ days.Day }}</div></q-btn>
         </q-card>  
 
         <q-card-section>
@@ -71,9 +72,9 @@
       v-model="dayDialog">
       <q-card style="width: 500px; height: 400px;">
         <q-card-section>
-          <q-select v-model="selectedExcersise" label="Excersises" :options="ExcersiseOptions"></q-select>
-          <q-input v-model="selectedReps" label="reps"></q-input>
-          <q-btn style="margin-top: 10px; background-color: orange;" @click="SaveExcercise">+</q-btn>
+          <q-select v-model="selectedexercise" label="exercises" :options="exerciseOptions" use-input new-value-mode="add"></q-select>
+          <q-input v-model="selectedsets" label="sets"></q-input>
+          <q-btn style="margin-top: 10px; background-color: orange;" @click="SaveExerciseFunction">+</q-btn>
           <div>{{ AllExercisesInDay }}</div>
         </q-card-section>
         <q-card-actions>
@@ -91,7 +92,7 @@
 <script setup>
 import {onMounted, ref} from 'vue'
 //import {axios} from 'axios'
-import {getLists, addWorkout, AddDay, GetTemplates, SaveDay } from '../../../../backend/index.js';
+import {getLists, addWorkout, AddDay, GetTemplates, LoopSave } from '../../../../backend/index.js';
 
 onMounted(async()=>{
 workoutList.value= await getLists()
@@ -113,54 +114,80 @@ const currentPlanId = ref([])
 
 //varijable za template dana
 const currentDayId=ref([])
-const selectedExcersise=ref("")
-const selectedReps=ref([])
+const selectedexercise=ref("")
+const selectedsets=ref([])
 const AllExercisesInDay=ref("")
-const SaveExcerciseVar=ref([])
-const ExcersiseOptions=["Bench Press", "Squat", "Deadlift"]
+const SaveExerciseFunctionVar=ref([])
+const exerciseOptions=["Bench Press", "Squat", "Deadlift"]
 
 //varijable za stvaranje dana u tjednu za plan
 const counter= ref(1)
 const daysList = ref([])
 
 
+
+//funkcija za dodati novi workout plan
+async function addWorkoutFunction(){
+  currentPlanId.value= await addWorkout(WorkoutListName.value, WorkoutDescription.value, NumberOfWeeks.value)
+  addWorkoutListDialog.value=false;
+  templatedialog.value=true;
+  workoutList.value=await getLists();
+}
+
+//edit postojecih planova
+async function EditWorkoutFunction(workout){
+  currentPlanId.value=workout.id
+  daysList.value= await GetTemplates(currentPlanId.value)
+  templatedialog.value=true
+
+}
+
+//funkcija koja ce pratiti current day
+//potrebna je funkcija sa argumentom days kako bi funkcija editworkout radila
+async function OpenDayDialogFunction(days){
+  dayDialog.value=true;
+  currentDayId.value = days.id
+}
+
+//funkcija za dodati dan u tjednu za workout
 async function AddDayFunction(){
 currentDayId.value=await AddDay(currentPlanId.value, counter.value)
 counter.value++
 daysList.value= await GetTemplates(currentPlanId.value)
-//console.log("ID received by AddDay:", currentPlanId)
 //console.log("counter:",counter.value)
 }
 
-async function addWorkout1(){
-  currentPlanId.value= await addWorkout(WorkoutListName.value, WorkoutDescription.value, NumberOfWeeks.value)
-  addWorkoutListDialog.value=false;
-  templatedialog.value=true;
-  //workoutList.value=await getLists();
-}
-
-async function SaveExcercise(){
+//funkcija za spremanje vjezbi u danu
+async function SaveExerciseFunction(){
   const temp ={
-    exercise: selectedExcersise.value,
-    reps: selectedReps.value
+    exercise: selectedexercise.value,
+    sets: selectedsets.value
   }
-  SaveExcerciseVar.value.push(temp)
-  AllExercisesInDay.value+=selectedExcersise.value + selectedReps.value + "\n"
+  SaveExerciseFunctionVar.value.push(temp)
+  AllExercisesInDay.value+=selectedexercise.value + selectedsets.value + "\n"
 
-  selectedExcersise.value=""
-  selectedReps.value= null
-  console.log("aaaa: ", AllExercisesInDay.value)
+  selectedexercise.value=""
+  selectedsets.value= null
+  //console.log("aaaa: ", AllExercisesInDay.value)
 }
 
+//cancel funckija
 async function WipeFunction(){
   AllExercisesInDay.value=""
-  SaveExcerciseVar.value=null
-  selectedExcersise.value=""
-  selectedReps.value=null
+  SaveExerciseFunctionVar.value=[]
+  selectedexercise.value=""
+  selectedsets.value=null
 }
 
+//funkcija za parsiranje vjezbi u danu i pojedino spremanje 
 async function SaveDayFunction(){
-  await SaveDay(currentPlanId.value, currentDayId.value)
+  //await SaveDay(currentPlanId.value, currentDayId.value)
+  for(const i of SaveExerciseFunctionVar.value){
+    await LoopSave(currentPlanId.value, currentDayId.value, i)
+  }
+  SaveExerciseFunctionVar.value=[]
+  AllExercisesInDay.value=""
+  dayDialog.value=false
 }
 
 </script>

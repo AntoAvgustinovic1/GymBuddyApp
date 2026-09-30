@@ -76,3 +76,12 @@ export async function SaveDay(id, dayId){
   Test:"test"
 })
 }
+
+export async function LoopSave(id, dayId, exercise){
+const querySnapshot= await addDoc(collection(db, `WorkoutList/${id}/templates/${dayId}/exercises`),
+{
+  exercise:exercise.exercise,
+  sets:exercise.sets
+})
+
+}
