@@ -18,7 +18,7 @@
       <q-card-section>
        <q-btn
        flat
-       @click="$router.push('/plan')"
+       @click="OpenPageFunction(workout)"
        >
        <div>{{ workout.WorkoutName}}</div></q-btn>
        <q-btn @click="EditWorkoutFunction(workout)">p</q-btn>
@@ -93,6 +93,7 @@
 import {onMounted, ref} from 'vue'
 //import {axios} from 'axios'
 import {getLists, addWorkout, AddDay, GetTemplates, LoopSave } from '../../../../backend/index.js';
+import { useRouter } from 'vue-router';
 
 onMounted(async()=>{
 workoutList.value= await getLists()
@@ -188,6 +189,15 @@ async function SaveDayFunction(){
   SaveExerciseFunctionVar.value=[]
   AllExercisesInDay.value=""
   dayDialog.value=false
+}
+
+const router = useRouter()
+async function OpenPageFunction(workout){
+  await router.push({
+    path:'/plan',
+    query: {planId: workout.id}
+  })
+  //currentPlanId.value=workout.id
 }
 
 </script>
