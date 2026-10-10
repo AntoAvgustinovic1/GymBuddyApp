@@ -196,6 +196,8 @@ async function OpenPageFunction(workout){
   await router.push({
     path:'/plan',
     query: {planId: workout.id}
+    //query moze prosljediti samo string, tako da ne moze se koristiti za objekte poput samog workout
+    //state: {workout} state moze prebaciti cijeli objekt
   })
   //currentPlanId.value=workout.id
 }

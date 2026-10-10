@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs, getDoc, addDoc} from "firebase/firestore";
+import { getFirestore, collection, getDocs, getDoc, addDoc, doc} from "firebase/firestore";
 
 const firebaseConfig = {
 
@@ -84,4 +84,12 @@ const querySnapshot= await addDoc(collection(db, `WorkoutList/${id}/templates/${
   sets:exercise.sets
 })
 
+}
+
+export async function FetchWorkout(id) {
+const querySnapshot= await getDoc(doc(db, 'WorkoutList', id))
+return{
+  id: querySnapshot.id,
+  ...querySnapshot.data()
+}
 }
